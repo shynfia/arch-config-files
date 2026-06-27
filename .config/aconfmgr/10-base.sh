@@ -14,6 +14,7 @@ AddPackage man-db 			        # A utility for reading man pages
 AddPackage man-pages 		        # Linux man pages
 AddPackage networkmanager 	        # Network connection manager and user applications
 AddPackage texinfo 			        # GNU documentation system for on-line information and printed output
+AddPackage yadm                     # Yet Another Dotfiles Manager
 AddPackage wireless-regdb 	        # Central Regulatory Domain Database - Sometimes required for European wifi
 AddPackage --foreign aconfmgr-git	# A configuration manager for Arch Linux
 AddPackage --foreign paru	        # Feature packed AUR helper
@@ -95,7 +96,6 @@ EOF
 # -------------
 # --- fstab ---
 # -------------
-# Different /etc/fstab, /etc/hostname and /etc/hosts for different machines
 CopyFileTo "/etc/fstab-$HOSTNAME" "/etc/fstab"
 
 # ---------------------------

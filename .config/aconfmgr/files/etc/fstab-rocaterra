@@ -3,20 +3,19 @@
 
 # <file system> <dir> <type> <options> <dump> <pass>
 # /dev/mapper/vg_ssd-root
-UUID=69fac328-f71b-4684-8022-6b0ea53abe52	/         	ext4      	rw,relatime	0 1
+/dev/vg_ssd/root	/         	ext4      	rw,relatime	0 1
 
 # /dev/sda2
-UUID=8e9397f7-d0ac-4fc4-b2b5-de0960cd4241	/boot     	ext4      	rw,relatime,noexec,nosuid,nodev	0 2
+UUID=b017a2d8-0dd1-4e9f-9e66-2be35f820f6d	/boot     	ext4      	rw,relatime,noexec,nosuid,nodev	0 2
 
 # /dev/sda1
-UUID=AD74-895D      	/efi      	vfat      	rw,relatime,fmask=0022,dmask=0022,noexec,nosuid,nodev,codepage=437,iocharset=ascii,shortname=mixed,utf8,errors=remount-ro	0 2
+UUID=82BF-17B3   	/efi      	vfat      	rw,relatime,fmask=0022,dmask=0022,noexec,nosuid,nodev,codepage=437,iocharset=ascii,shortname=mixed,utf8,errors=remount-ro	0 2
 
 # /dev/mapper/vg_ssd-home
-UUID=47c57571-7e5a-41bc-a902-5290302e74cd	/home     	ext4      	rw,relatime,nodev,nosuid	0 2
+/dev/vg_ssd/home	/home     	ext4      	rw,relatime,nodev,nosuid	0 2
 
 # /dev/mapper/vg_hdd-data
-UUID=46adbfa0-f393-496d-a858-39fcb4f31017	/data/shynfia	ext4      	rw,relatime,nodev,nosuid	0 2
+/dev/vg_hdd/data	/data	ext4      	rw,relatime,nodev,nosuid	0 2
 
 # /dev/mapper/vg_ssd-swap
-UUID=43794277-f50b-4440-94b0-7f14e58e6256	none      	swap      	defaults  	0 0
-
+/dev/vg_ssd/swap	none      	swap      	defaults  	0 0
