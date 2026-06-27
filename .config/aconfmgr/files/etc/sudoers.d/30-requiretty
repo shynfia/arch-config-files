@@ -1,0 +1,3 @@
+# Disable "ssh <hostname> sudo <cmd>" because it will show the password in clear text
+# You have to use "ssh -t <hostname> sudo <cmd>"
+Defaults requiretty

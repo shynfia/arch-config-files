@@ -1,0 +1,164 @@
+# ---------------------
+# --- Base packages ---
+# ---------------------
+AddPackage base 			        # [Required] Minimal package set to define a basic Arch Linux installation
+AddPackage base-devel 		        # Basic tools to build Arch Linux packages - Required for AUR
+AddPackage dosfstools 		        # DOS filesystem utilities (FAT)
+AddPackage e2fsprogs 		        # Ext2/3/4 filesystem utilities
+AddPackage gptfdisk                 # A text-mode partitioning tool that works on GUID Partition Table (GPT) disks
+AddPackage intel-ucode 		        # Microcode update files for Intel CPUs
+AddPackage linux 			        # The Linux kernel and modules
+AddPackage linux-firmware 	        # Firmware files for Linux - Default set
+AddPackage lvm2 			        # Logical Volume Manager 2 utilities
+AddPackage man-db 			        # A utility for reading man pages
+AddPackage man-pages 		        # Linux man pages
+AddPackage networkmanager 	        # Network connection manager and user applications
+AddPackage texinfo 			        # GNU documentation system for on-line information and printed output
+AddPackage wireless-regdb 	        # Central Regulatory Domain Database - Sometimes required for European wifi
+AddPackage --foreign aconfmgr-git	# A configuration manager for Arch Linux
+AddPackage --foreign paru	        # Feature packed AUR helper
+
+# ------------------
+# --- mkinitcpio ---
+# ------------------
+f="$(GetPackageOriginalFile mkinitcpio /etc/mkinitcpio.conf)"
+# Add lvm2 to HOOKS array on line 55 (this way examples in the file are not modified)
+sed -i '55 s/block filesystems/block lvm2 filesystems/' "$f"
+
+# Add fallback initramfs
+CopyFile /etc/mkinitcpio.d/linux.preset
+AddPackage linux-firmware-qlogic        # Firmware files for Linux - Firmware for QLogic devices
+AddPackage --foreign aic94xx-firmware   # Adaptec SAS 44300, 48300, 58300 Sequencer Firmware for AIC94xx driver
+AddPackage --foreign ast-firmware       # Aspeed VGA module from the IPMI
+AddPackage --foreign upd72020x-fw       # Renesas uPD720201 / uPD720202 USB 3.0 chipsets firmware
+AddPackage --foreign wd719x-firmware    # Firmware for Western Digital WD7193, WD7197, and WD7296 SCSI cards
+
+# --------------------
+# --- Systemd-boot ---
+# --------------------
+# Arch entry
+cat > "$(CreateFile /boot/loader/entries/arch.conf)" <<EOF
+title Arch Linux
+linux /vmlinuz-linux
+initrd /initramfs-linux.img
+options root=/dev/vg_ssd/root rw
+EOF
+
+# Arch fallback entry
+cat > "$(CreateFile /boot/loader/entries/arch-fallback.conf)" <<EOF
+title Arch Linux Fallback
+linux /vmlinuz-linux
+initrd /initramfs-linux-fallback.img
+options root=/dev/vg_ssd/root rw
+EOF
+
+# Menu config
+cat > "$(CreateFile /efi/loader/loader.conf)" <<EOF
+default arch.conf
+timeout 0
+console-mode auto
+editor false
+auto-firmware true
+auto-reboot true
+auto-poweroff true
+EOF
+
+# Pacman hook to update systemd-boot
+cat > "$(CreateFile /etc/pacman.d/hooks/95-systemd-boot.hook)" <<EOF
+[Trigger]
+Type = Package
+Operation = Upgrade
+Target = systemd
+
+[Action]
+Description = Gracefully upgrading systemd-boot...
+When = PostTransaction
+Exec = /usr/bin/systemctl restart systemd-boot-update.service
+EOF
+
+# This command will not have an effect since /efi is a FAT32 system with no support for Linux permissions,
+# but having it here prevents aconfmgr from including it in every save
+SetFileProperty /efi/loader/loader.conf mode 755
+
+# ----------------------
+# --- Package config ---
+# ----------------------
+# Pacman config
+CopyFile /etc/pacman.conf
+
+# No debug packages
+cat > "$(CreateFile /etc/makepkg.conf.d/no_debug.conf)" <<EOF
+# Prevent creation of debug packages
+OPTIONS+=(!debug)
+EOF
+
+# -------------
+# --- fstab ---
+# -------------
+# Different /etc/fstab, /etc/hostname and /etc/hosts for different machines
+CopyFileTo "/etc/fstab-$HOSTNAME" "/etc/fstab"
+
+# ---------------------------
+# --- Hosts configuration ---
+# ---------------------------
+# Host name
+echo "$HOSTNAME" > "$(CreateFile /etc/hostname)"
+# Hostname resolution
+f="$(GetPackageOriginalFile filesystem /etc/hosts)"
+echo "127.0.1.1        $HOSTNAME" >> "$f"
+
+# ------------------------
+# --- systemd-resolved ---
+# ------------------------
+CreateLink /etc/resolv.conf ../run/systemd/resolve/stub-resolv.conf
+
+# -------------------------
+# --- Locale and region ---
+# -------------------------
+# System locales
+f="$(GetPackageOriginalFile glibc /etc/locale.gen)"
+sed -i 's/^#\(en_US.UTF-8\)/\1/g' "$f"
+sed -i 's/^#\(es_ES.UTF-8\)/\1/g' "$f"
+# Default language
+echo "LANG=en_US.UTF-8" > "$(CreateFile /etc/locale.conf)"
+
+# Region
+CreateLink /etc/localtime /usr/share/zoneinfo/Europe/Madrid
+
+# ----------------
+# --- Keyboard ---
+# ----------------
+# tty keyboard layout
+echo "KEYMAP=es" > "$(CreateFile /etc/vconsole.conf)"
+
+# X11 keyboard layout configuration - required for plasmalogin
+CopyFile /etc/X11/xorg.conf.d/00-keyboard.conf
+
+# ------------------------
+# --- systemd services ---
+# ------------------------
+# getty - Arch TTY
+CreateLink /etc/systemd/system/autovt@.service /usr/lib/systemd/system/getty@.service
+CreateLink /etc/systemd/system/getty.target.wants/getty@tty1.service /usr/lib/systemd/system/getty@.service
+
+# NetworkManager
+CreateLink /etc/systemd/system/dbus-org.freedesktop.nm-dispatcher.service /usr/lib/systemd/system/NetworkManager-dispatcher.service
+CreateLink /etc/systemd/system/network-online.target.wants/NetworkManager-wait-online.service /usr/lib/systemd/system/NetworkManager-wait-online.service
+CreateLink /etc/systemd/system/multi-user.target.wants/NetworkManager.service /usr/lib/systemd/system/NetworkManager.service
+
+# systemd-resolved - DNS resolver
+CreateLink /etc/systemd/system/dbus-org.freedesktop.resolve1.service /usr/lib/systemd/system/systemd-resolved.service
+CreateLink /etc/systemd/system/sockets.target.wants/systemd-resolved-monitor.socket /usr/lib/systemd/system/systemd-resolved-monitor.socket
+CreateLink /etc/systemd/system/sockets.target.wants/systemd-resolved-varlink.socket /usr/lib/systemd/system/systemd-resolved-varlink.socket
+CreateLink /etc/systemd/system/sysinit.target.wants/systemd-resolved.service /usr/lib/systemd/system/systemd-resolved.service
+
+# systemd-timesyncd - Time sync service
+CreateLink /etc/systemd/system/dbus-org.freedesktop.timesync1.service /usr/lib/systemd/system/systemd-timesyncd.service
+CreateLink /etc/systemd/system/sysinit.target.wants/systemd-timesyncd.service /usr/lib/systemd/system/systemd-timesyncd.service
+
+# Remote filesystem support
+CreateLink /etc/systemd/system/multi-user.target.wants/remote-fs.target /usr/lib/systemd/system/remote-fs.target
+
+# Other services enabled by default
+CreateLink /etc/systemd/system/sockets.target.wants/systemd-userdbd.socket /usr/lib/systemd/system/systemd-userdbd.socket
+CreateLink /etc/systemd/user/sockets.target.wants/p11-kit-server.socket /usr/lib/systemd/user/p11-kit-server.socket

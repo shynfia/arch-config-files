@@ -1,0 +1,10 @@
+# Set default EDITOR to restricted version of nano, 
+# and do not allow visudo to use EDITOR/VISUAL.
+
+# With env_editor disabled, the environment variable
+# SUDO_EDITOR will only be used if it matches one of 
+# the default editors specified here
+
+# See https://wiki.archlinux.org/title/Sudo#Using_visudo
+
+Defaults editor=/usr/bin/rnano, !env_editor
