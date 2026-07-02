@@ -13,6 +13,7 @@ AddPackage lvm2 			        # Logical Volume Manager 2 utilities
 AddPackage man-db 			        # A utility for reading man pages
 AddPackage man-pages 		        # Linux man pages
 AddPackage networkmanager 	        # Network connection manager and user applications
+AddPackage sudo                     # Give certain users the ability to run some commands as root
 AddPackage texinfo 			        # GNU documentation system for on-line information and printed output
 AddPackage yadm                     # Yet Another Dotfiles Manager
 AddPackage wireless-regdb 	        # Central Regulatory Domain Database - Sometimes required for European wifi
@@ -81,6 +82,22 @@ EOF
 # but having it here prevents aconfmgr from including it in every save
 SetFileProperty /efi/loader/loader.conf mode 755
 
+# UEFI shell
+AddPackage edk2-shell # EDK2 UEFI Shell
+
+cat > "$(CreateFile /etc/pacman.d/hooks/50-uefi-shell.hook)" <<EOF
+[Trigger]
+Type = Package
+Operation = Install
+Operation = Upgrade
+Target = edk2-shell
+
+[Action]
+Description = Copying UEFI shell to ESP...
+When = PostTransaction
+Exec = /usr/bin/cp /usr/share/edk2-shell/x64/Shell.efi /efi/shellx64.efi
+EOF
+
 # ----------------------
 # --- Package config ---
 # ----------------------
@@ -96,7 +113,12 @@ EOF
 # -------------
 # --- fstab ---
 # -------------
-CopyFileTo "/etc/fstab-$HOSTNAME" "/etc/fstab"
+function FstabUUIDFilter() {
+    # Exclude UUIDs since they will inevitable vary from machine to machine
+    sed 's/^UUID=.*\t\(\/\|none\)/\1/g'
+}
+AddFileContentFilter /etc/fstab FstabUUIDFilter
+CopyFile /etc/fstab
 
 # ---------------------------
 # --- Hosts configuration ---
@@ -134,6 +156,11 @@ echo "KEYMAP=es" > "$(CreateFile /etc/vconsole.conf)"
 # X11 keyboard layout configuration - required for plasmalogin
 CopyFile /etc/X11/xorg.conf.d/00-keyboard.conf
 
+# ------------
+# --- sudo ---
+# ------------
+CopyFile /etc/sudoers
+
 # ------------------------
 # --- systemd services ---
 # ------------------------
@@ -162,3 +189,10 @@ CreateLink /etc/systemd/system/multi-user.target.wants/remote-fs.target /usr/lib
 # Other services enabled by default
 CreateLink /etc/systemd/system/sockets.target.wants/systemd-userdbd.socket /usr/lib/systemd/system/systemd-userdbd.socket
 CreateLink /etc/systemd/user/sockets.target.wants/p11-kit-server.socket /usr/lib/systemd/user/p11-kit-server.socket
+
+# ------------------
+# --- Filesystem ---
+# ------------------
+
+# Introduced by a systemd update, permissions are modified from their default on boot
+SetFileProperty / mode 555

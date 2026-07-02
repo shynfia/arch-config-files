@@ -2,7 +2,7 @@ AddPackage steam                    # Valve's digital software delivery system
 AddPackage --foreign vintagestory   # Uncompromising wilderness survival sandbox game (requires paid account)
 
 if [[ "$HOSTNAME" == "rocaterra" ]]; then
-    cat > "$(CreateFile /etc/pacman.d/hooks/vintagestory.hook)" <<-EOF
+    cat > "$(CreateFile /etc/pacman.d/hooks/50-vintagestory.hook)" <<-EOF
 		# Set up Vintage Story to use NVIDIA GPU
 		[Trigger]
 		Operation=Install
@@ -18,5 +18,5 @@ if [[ "$HOSTNAME" == "rocaterra" ]]; then
 		# this env variable is empty when the hook runs
 		# We silence kbuildsycoca6 redirecting its output to /dev/null
 		Exec=/usr/bin/bash -c 'echo "PrefersNonDefaultGPU=true" >> /usr/share/applications/vintagestory.desktop && XDG_MENU_PREFIX="plasma-" kbuildsycoca6 &> /dev/null'
-EOF
+	EOF
 fi

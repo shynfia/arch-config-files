@@ -1,0 +1,19 @@
+# Static information about the filesystems.
+# See fstab(5) for details.
+
+# <file system> <dir> <type> <options> <dump> <pass>
+# /dev/mapper/vg_ssd-root
+/         	ext4      	rw,relatime	0 1
+
+# /dev/sda1
+/efi      	vfat      	rw,relatime,fmask=0022,dmask=0022,codepage=437,iocharset=ascii,shortname=mixed,utf8,errors=remount-ro	0 2
+
+# /dev/sda2
+/boot     	ext4      	rw,relatime	0 2
+
+# /dev/mapper/vg_hdd-data
+/data     	ext4      	rw,relatime	0 2
+
+# /dev/mapper/vg_ssd-swap
+none      	swap      	defaults  	0 0
+

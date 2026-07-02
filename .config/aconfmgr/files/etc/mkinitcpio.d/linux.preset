@@ -5,6 +5,7 @@ ALL_kver="/boot/vmlinuz-linux"
 #ALL_kerneldest="/boot/vmlinuz-linux"
 
 #PRESETS=('default')
+# --- Add fallback initramfs ---
 PRESETS=('default' 'fallback')
 
 #default_config="/etc/mkinitcpio.conf"
