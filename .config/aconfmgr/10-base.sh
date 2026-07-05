@@ -35,72 +35,9 @@ AddPackage --foreign ast-firmware       # Aspeed VGA module from the IPMI
 AddPackage --foreign upd72020x-fw       # Renesas uPD720201 / uPD720202 USB 3.0 chipsets firmware
 AddPackage --foreign wd719x-firmware    # Firmware for Western Digital WD7193, WD7197, and WD7296 SCSI cards
 
-# --------------------
-# --- Systemd-boot ---
-# --------------------
-# Arch entry
-cat > "$(CreateFile /boot/loader/entries/arch.conf)" <<EOF
-title Arch Linux
-linux /vmlinuz-linux
-initrd /initramfs-linux.img
-options root=/dev/vg_ssd/root rw
-EOF
-
-# Arch fallback entry
-cat > "$(CreateFile /boot/loader/entries/arch-fallback.conf)" <<EOF
-title Arch Linux Fallback
-linux /vmlinuz-linux
-initrd /initramfs-linux-fallback.img
-options root=/dev/vg_ssd/root rw
-EOF
-
-# Menu config
-cat > "$(CreateFile /efi/loader/loader.conf)" <<EOF
-default arch.conf
-timeout 0
-console-mode auto
-editor false
-auto-firmware true
-auto-reboot true
-auto-poweroff true
-EOF
-
-# Pacman hook to update systemd-boot
-cat > "$(CreateFile /etc/pacman.d/hooks/95-systemd-boot.hook)" <<EOF
-[Trigger]
-Type = Package
-Operation = Upgrade
-Target = systemd
-
-[Action]
-Description = Gracefully upgrading systemd-boot...
-When = PostTransaction
-Exec = /usr/bin/systemctl restart systemd-boot-update.service
-EOF
-
-# This command will not have an effect since /efi is a FAT32 system with no support for Linux permissions,
-# but having it here prevents aconfmgr from including it in every save
-SetFileProperty /efi/loader/loader.conf mode 755
-
-# UEFI shell
-AddPackage edk2-shell # EDK2 UEFI Shell
-
-cat > "$(CreateFile /etc/pacman.d/hooks/50-uefi-shell.hook)" <<EOF
-[Trigger]
-Type = Package
-Operation = Install
-Operation = Upgrade
-Target = edk2-shell
-
-[Action]
-Description = Copying UEFI shell to ESP...
-When = PostTransaction
-Exec = /usr/bin/cp /usr/share/edk2-shell/x64/Shell.efi /efi/shellx64.efi
-EOF
-
-# ----------------------
-# --- Package config ---
-# ----------------------
+# ---------------------------------
+# --- Package management config ---
+# ---------------------------------
 # Pacman config
 CopyFile /etc/pacman.conf
 
@@ -113,18 +50,39 @@ EOF
 # -------------
 # --- fstab ---
 # -------------
-function FstabUUIDFilter() {
-    # Exclude UUIDs since they will inevitable vary from machine to machine
-    sed 's/^UUID=.*\t\(\/\|none\)/\1/g'
-}
-AddFileContentFilter /etc/fstab FstabUUIDFilter
-CopyFile /etc/fstab
+root_uuid=$(findmnt -no UUID /)
+efi_uuid=$(findmnt -no UUID /efi)
+boot_uuid=$(findmnt -no UUID /boot)
+data_uuid=$(findmnt -no UUID /data)
+swap_uuid=$(sudo blkid -s UUID -o value /dev/vg_ssd/swap)
+
+cat > "$(CreateFile /etc/fstab)" <<EOF
+# Static information about the filesystems.
+# See fstab(5) for details.
+
+# <file system> <dir> <type> <options> <dump> <pass>
+# /dev/mapper/vg_ssd-root
+UUID="$root_uuid"   /         	ext4      	rw,relatime	0 1
+
+# /dev/sda1
+UUID="$efi_uuid"    /efi      	vfat      	rw,relatime,nodev,nosuid,fmask=0022,dmask=0022,codepage=437,iocharset=ascii,shortname=mixed,utf8,errors=remount-ro	0 2
+
+# /dev/sda2
+UUID="$boot_uuid"   /boot     	ext4      	rw,relatime,nodev,nosuid	0 2
+
+# /dev/mapper/vg_hdd-data
+UUID="$data_uuid"   /data     	ext4      	rw,relatime,noexec,nodev,nosuid	0 2
+
+# /dev/mapper/vg_ssd-swap
+UUID="$swap_uuid"   none      	swap      	defaults  	0 0
+EOF
 
 # ---------------------------
 # --- Hosts configuration ---
 # ---------------------------
 # Host name
 echo "$HOSTNAME" > "$(CreateFile /etc/hostname)"
+
 # Hostname resolution
 f="$(GetPackageOriginalFile filesystem /etc/hosts)"
 echo "127.0.1.1        $HOSTNAME" >> "$f"
@@ -141,6 +99,7 @@ CreateLink /etc/resolv.conf ../run/systemd/resolve/stub-resolv.conf
 f="$(GetPackageOriginalFile glibc /etc/locale.gen)"
 sed -i 's/^#\(en_US.UTF-8\)/\1/g' "$f"
 sed -i 's/^#\(es_ES.UTF-8\)/\1/g' "$f"
+
 # Default language
 echo "LANG=en_US.UTF-8" > "$(CreateFile /etc/locale.conf)"
 
