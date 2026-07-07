@@ -1,24 +1,15 @@
 # ---------------------
 # --- Base packages ---
 # ---------------------
-AddPackage base 			        # [Required] Minimal package set to define a basic Arch Linux installation
-AddPackage base-devel 		        # Basic tools to build Arch Linux packages - Required for AUR
-AddPackage dosfstools 		        # DOS filesystem utilities (FAT)
-AddPackage e2fsprogs 		        # Ext2/3/4 filesystem utilities
-AddPackage gptfdisk                 # A text-mode partitioning tool that works on GUID Partition Table (GPT) disks
-AddPackage intel-ucode 		        # Microcode update files for Intel CPUs
-AddPackage linux 			        # The Linux kernel and modules
-AddPackage linux-firmware 	        # Firmware files for Linux - Default set
-AddPackage lvm2 			        # Logical Volume Manager 2 utilities
-AddPackage man-db 			        # A utility for reading man pages
-AddPackage man-pages 		        # Linux man pages
-AddPackage networkmanager 	        # Network connection manager and user applications
-AddPackage sudo                     # Give certain users the ability to run some commands as root
-AddPackage texinfo 			        # GNU documentation system for on-line information and printed output
-AddPackage yadm                     # Yet Another Dotfiles Manager
-AddPackage wireless-regdb 	        # Central Regulatory Domain Database - Sometimes required for European wifi
-AddPackage --foreign aconfmgr-git	# A configuration manager for Arch Linux
-AddPackage --foreign paru	        # Feature packed AUR helper
+AddPackage base                 # [Required] Minimal package set to define a basic Arch Linux installation
+AddPackage base-devel 		# Basic tools to build Arch Linux packages - Required for AUR
+AddPackage intel-ucode 		# Microcode update files for Intel CPUs
+AddPackage linux 		# The Linux kernel and modules
+AddPackage linux-firmware 	# Firmware files for Linux - Default set
+AddPackage lvm2 		# Logical Volume Manager 2 utilities
+AddPackage networkmanager 	# Network connection manager and user applications
+AddPackage sudo                 # Give certain users the ability to run some commands as root
+AddPackage wireless-regdb 	# Central Regulatory Domain Database - Sometimes required for European wifi
 
 # ------------------
 # --- mkinitcpio ---
@@ -112,8 +103,28 @@ CreateLink /etc/localtime /usr/share/zoneinfo/Europe/Madrid
 # tty keyboard layout
 echo "KEYMAP=es" > "$(CreateFile /etc/vconsole.conf)"
 
-# X11 keyboard layout configuration - required for plasmalogin
-CopyFile /etc/X11/xorg.conf.d/00-keyboard.conf
+# X11 keyboard layout configuration - required for plasmalogin and inherited by plasma
+cat > "$(CreateFile /etc/X11/xorg.conf.d/00-keyboard.conf)" <<EOF
+# Written by systemd-localed(8), read by systemd-localed and Xorg. It's
+# probably wise not to edit this file manually. Use localectl(1) to
+# update this file.
+Section "InputClass"
+        Identifier "system-keyboard"
+        MatchIsKeyboard "on"
+        Option "XkbLayout" "es"
+EndSection
+EOF
+
+# ----------------------
+# --- NetworkManager ---
+# ----------------------
+# Prevent normal users from creating system-wide connections by default
+CopyFile /etc/polkit-1/rules.d/10-nm-no-system-wide.rules
+
+# Enable NetworkManager service
+CreateLink /etc/systemd/system/dbus-org.freedesktop.nm-dispatcher.service /usr/lib/systemd/system/NetworkManager-dispatcher.service
+CreateLink /etc/systemd/system/network-online.target.wants/NetworkManager-wait-online.service /usr/lib/systemd/system/NetworkManager-wait-online.service
+CreateLink /etc/systemd/system/multi-user.target.wants/NetworkManager.service /usr/lib/systemd/system/NetworkManager.service
 
 # ------------
 # --- sudo ---
@@ -126,11 +137,6 @@ CopyFile /etc/sudoers
 # getty - Arch TTY
 CreateLink /etc/systemd/system/autovt@.service /usr/lib/systemd/system/getty@.service
 CreateLink /etc/systemd/system/getty.target.wants/getty@tty1.service /usr/lib/systemd/system/getty@.service
-
-# NetworkManager
-CreateLink /etc/systemd/system/dbus-org.freedesktop.nm-dispatcher.service /usr/lib/systemd/system/NetworkManager-dispatcher.service
-CreateLink /etc/systemd/system/network-online.target.wants/NetworkManager-wait-online.service /usr/lib/systemd/system/NetworkManager-wait-online.service
-CreateLink /etc/systemd/system/multi-user.target.wants/NetworkManager.service /usr/lib/systemd/system/NetworkManager.service
 
 # systemd-resolved - DNS resolver
 CreateLink /etc/systemd/system/dbus-org.freedesktop.resolve1.service /usr/lib/systemd/system/systemd-resolved.service
@@ -148,6 +154,12 @@ CreateLink /etc/systemd/system/multi-user.target.wants/remote-fs.target /usr/lib
 # Other services enabled by default
 CreateLink /etc/systemd/system/sockets.target.wants/systemd-userdbd.socket /usr/lib/systemd/system/systemd-userdbd.socket
 CreateLink /etc/systemd/user/sockets.target.wants/p11-kit-server.socket /usr/lib/systemd/user/p11-kit-server.socket
+
+# -----------------------
+# --- systemd devices ---
+# -----------------------
+# Mask TPM device to disable TPM, should prevent hanging when shutting down
+CreateLink /etc/systemd/system/dev-tpmrm0.device /dev/null
 
 # ------------------
 # --- Filesystem ---

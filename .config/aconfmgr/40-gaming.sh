@@ -1,6 +1,12 @@
 AddPackage steam                    # Valve's digital software delivery system
 AddPackage --foreign vintagestory   # Uncompromising wilderness survival sandbox game (requires paid account)
 
+AddPackage lutris # Open Gaming Platform
+AddPackage umu-launcher # The Unified Launcher for Windows Games on Linux, to run Proton with fixes outside of Steam
+AddPackage wine # A compatibility layer for running Windows programs
+CreateLink /etc/fonts/conf.d/30-win32-aliases.conf /usr/share/fontconfig/conf.default/30-win32-aliases.conf
+
+
 if [[ "$HOSTNAME" == "rocaterra" ]]; then
     cat > "$(CreateFile /etc/pacman.d/hooks/50-vintagestory.hook)" <<-EOF
 		# Set up Vintage Story to use NVIDIA GPU

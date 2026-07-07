@@ -1,7 +1,18 @@
 AddPackage bash-completion          # Programmable completion for the bash shell
+AddPackage dosfstools 		        # DOS filesystem utilities (FAT)
+AddPackage e2fsprogs 		        # Ext2/3/4 filesystem utilities
 AddPackage ex-vi-compat             # The ex and vi commands based on vim's compatibility modes
+AddPackage gptfdisk                 # A text-mode partitioning tool that works on GUID Partition Table (GPT) disks
+AddPackage man-db 			        # A utility for reading man pages
+AddPackage man-pages 		        # Linux man pages
 AddPackage nano 			        # Pico editor clone with enhancements
 AddPackage nano-syntax-highlighting # Nano editor syntax highlighting enhancements
+AddPackage texinfo 			        # GNU documentation system for on-line information and printed output
+AddPackage yadm                     # Yet Another Dotfiles Manager
+
+AddPackage --foreign aconfmgr-git	# A configuration manager for Arch Linux
+AddPackage --foreign paru	        # Feature packed AUR helper
+
 
 # XDG Base Directory configuration
 cat > "$(CreateFile /etc/profile.d/00-xdg-base-directory.sh)" <<EOF

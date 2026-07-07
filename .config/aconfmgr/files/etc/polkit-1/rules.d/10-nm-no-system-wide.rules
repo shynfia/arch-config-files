@@ -1,0 +1,6 @@
+// Prevent all users (except root) from creating system connections
+polkit.addRule(function(action, subject) {
+    if (action.id == "org.freedesktop.NetworkManager.settings.modify.system") {
+        return polkit.Result.NO;
+    }
+});
