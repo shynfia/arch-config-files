@@ -6,6 +6,7 @@ AddPackage base-devel 		# Basic tools to build Arch Linux packages - Required fo
 AddPackage intel-ucode 		# Microcode update files for Intel CPUs
 AddPackage linux 		# The Linux kernel and modules
 AddPackage linux-firmware 	# Firmware files for Linux - Default set
+AddPackage linux-headers        # Headers and scripts for building modules for the Linux kernel - required for building the NVIDIA drivers
 AddPackage lvm2 		# Logical Volume Manager 2 utilities
 AddPackage networkmanager 	# Network connection manager and user applications
 AddPackage sudo                 # Give certain users the ability to run some commands as root

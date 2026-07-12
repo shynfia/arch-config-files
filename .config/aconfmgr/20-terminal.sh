@@ -14,8 +14,8 @@ AddPackage --foreign aconfmgr-git	# A configuration manager for Arch Linux
 AddPackage --foreign paru	        # Feature packed AUR helper
 
 
-# XDG Base Directory configuration
-cat > "$(CreateFile /etc/profile.d/00-xdg-base-directory.sh)" <<EOF
+# XDG Base Directory configuration - quoted EOF to prevent variable substitution
+cat > "$(CreateFile /etc/profile.d/00-xdg-base-directory.sh)" << 'EOF'
 # https://wiki.archlinux.org/title/XDG_Base_Directory#Specification
 export XDG_CONFIG_HOME="$HOME"/.config
 export XDG_CACHE_HOME="$HOME"/.cache

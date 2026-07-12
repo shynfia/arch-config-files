@@ -19,7 +19,6 @@ CreateLink /etc/systemd/user/sockets.target.wants/pipewire.socket /usr/lib/syste
 # --------------------------------------
 # --- Graphics drivers and utilities ---
 # --------------------------------------
-AddPackage linux-headers    # Headers and scripts for building modules for the Linux kernel - required for building the NVIDIA drivers
 AddPackage nvtop 			# GPUs process monitoring for AMD, Intel and NVIDIA
 
 if [[ "$HOSTNAME" == "rocaterra" ]]; then
