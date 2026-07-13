@@ -1,4 +1,5 @@
 AddPackage bash-completion          # Programmable completion for the bash shell
+AddPackage bat                      # Cat clone with syntax highlighting and git integration
 AddPackage dosfstools 		        # DOS filesystem utilities (FAT)
 AddPackage e2fsprogs 		        # Ext2/3/4 filesystem utilities
 AddPackage ex-vi-compat             # The ex and vi commands based on vim's compatibility modes
@@ -13,7 +14,9 @@ AddPackage yadm                     # Yet Another Dotfiles Manager
 AddPackage --foreign aconfmgr-git	# A configuration manager for Arch Linux
 AddPackage --foreign paru	        # Feature packed AUR helper
 
-
+# ------------
+# --- bash ---
+# ------------
 # XDG Base Directory configuration - quoted EOF to prevent variable substitution
 cat > "$(CreateFile /etc/profile.d/00-xdg-base-directory.sh)" << 'EOF'
 # https://wiki.archlinux.org/title/XDG_Base_Directory#Specification
@@ -29,4 +32,30 @@ export GNUPGHOME="$XDG_DATA_HOME"/gnupg
 
 # CUDA
 export CUDA_CACHE_PATH="$XDG_CACHE_HOME"/nv
+EOF
+
+# ------------
+# --- paru ---
+# ------------
+cat > "$(CreateFile /etc/paru.conf)" << 'EOF'
+#
+# $PARU_CONF
+# /etc/paru.conf
+# ~/.config/paru/paru.conf
+#
+# See the paru.conf(5) manpage for options
+
+#
+# GENERAL OPTIONS
+#
+[options]
+PgpFetch
+Devel
+Provides
+DevelSuffixes = -git -cvs -svn -bzr -darcs -always -hg -fossil
+BatchInstall
+UpgradeMenu
+NewsOnUpgrade
+RemoveMake
+CleanAfter
 EOF
