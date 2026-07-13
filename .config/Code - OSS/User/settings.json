@@ -1,0 +1,5 @@
+{
+    "window.dialogStyle": "custom",
+    "explorer.confirmDelete": false,
+    "editor.unicodeHighlight.nonBasicASCII": false
+}
