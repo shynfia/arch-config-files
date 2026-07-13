@@ -1,0 +1,44 @@
+arkrc
+baloofileinformationrc
+baloofilerc
+bluedevilglobalrc
+discoverrc
+drkonqirc
+kactivitymanagerd-statsrc
+kactivitymanagerdrc
+kconf_updaterc
+kmserverrc
+kwalletrc
+kwinoutputconfig.json
+kwinrc
+kwinrulesrc
+kxkbrc
+plasma-org.kde.plasma.desktop-appletsrc
+plasma-welcomerc
+plasmanotifyrc
+plasmaparc
+plasmashellrc
+powermanagementprofilesrc
+QtProject.conf
+spectaclerc
+trashrc
+
+Code - OSS/*
+!Code - OSS/User
+Code - OSS/User/*
+!Code - OSS/User/settings.json
+
+dconf/
+evolution/
+fcitx/
+
+fcitx5/*
+!fcitx5/profile
+
+ibus/
+KDE/
+libaccounts-glib/
+mozilla/
+pulse/
+session/
+vim/

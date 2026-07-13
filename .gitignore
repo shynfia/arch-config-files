@@ -1,0 +1,34 @@
+# Normal user directories
+Desktop/
+Documents/
+Downloads/
+Games/
+Music/
+Pictures/
+Projects/
+Public/
+Templates/
+Videos/
+
+# Unneeded hidden files and folders in $HOME
+.bash_history
+.pulse-cookie
+.steampath
+.steampid
+
+.cache/
+.pki/
+.ssh/
+.steam/
+.var/
+.vscode-oss/
+.vscode-oss-shared/
+
+# Ignore .local, except some useful files
+.local/state/
+.local/share/*
+
+# Allow Lutris config
+!.local/share/lutris
+.local/share/lutris/*
+!.local/share/lutris/lutris.conf
