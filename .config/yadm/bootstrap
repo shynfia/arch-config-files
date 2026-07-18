@@ -1,0 +1,12 @@
+#!/usr/bin/bash
+
+# Apply system configuration
+aconfmgr apply
+
+# Reinstall packages that trigger pacman hooks on install
+packages_to_reinstall=(edk2-shell vintagestory)
+installed_packages=($(comm -12 <(printf '%s\n' "${packages_to_reinstall[@]}" | sort) <(paru -Qq | sort)))
+
+if [[ ${#installed_packages[@]} -gt 0 ]]; then
+    paru -S "${installed_packages[@]}"
+fi

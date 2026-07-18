@@ -1,9 +1,12 @@
 # Arch Config Files
+My personal system settings files and dotfiles. Use at your own risk.
 
 ## After `aconfmgr apply`
 Reinstall the following packages so their hooks trigger (when `aconfmgr` first installs them, hooks aren't in place yet).
 - `edk2-shell` — Will copy UEFI shell to ESP
 - `vintagestory` — Only if computer has hybrid graphics. Will update its desktop entry so it uses the discrete GPU
+
+The included YADM bootstrap script automatically reinstalls these packages after applying `aconfmgr` settings. The package list in this README and the package list in said script must be kept in sync.
 
 ## Dotfiles
 

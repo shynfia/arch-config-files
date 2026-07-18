@@ -4,6 +4,10 @@ baloofilerc
 bluedevilglobalrc
 discoverrc
 drkonqirc
+# Autoupdated by Plasma, no need to keep it in repo
+gtkrc
+# Autoupdated by Plasma, no need to keep it in repo
+gtkrc-2.0
 kactivitymanagerd-statsrc
 kactivitymanagerdrc
 kconf_updaterc
