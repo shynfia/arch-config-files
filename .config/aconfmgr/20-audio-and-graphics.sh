@@ -92,8 +92,10 @@ CreateLink /etc/systemd/system/display-manager.service /usr/lib/systemd/system/p
 # XDG User Directories service - keeps user dirs up to date
 CreateLink /etc/systemd/user/graphical-session-pre.target.wants/xdg-user-dirs.service /usr/lib/systemd/user/xdg-user-dirs.service
 
-
+# -----------
 # --- GTK ---
+# -----------
+# Install input method, required for GTK apps to correctly process non-ASCII characters
 AddPackage fcitx5               # Next generation of fcitx, cross-platform input method framework
 AddPackage fcitx5-configtool    # Configuration Tool for Fcitx5
 AddPackage fcitx5-gtk           # Fcitx5 gtk im module and glib based dbus client library
