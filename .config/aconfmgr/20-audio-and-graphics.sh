@@ -79,6 +79,35 @@ CreateLink /etc/fonts/conf.d/66-noto-serif.conf /usr/share/fontconfig/conf.defau
 # Liberation configuration
 CreateLink /etc/fonts/conf.d/48-guessfamily.conf /usr/share/fontconfig/conf.default/48-guessfamily.conf
 
+# -----------
+# --- GTK ---
+# -----------
+# Install input method, required for GTK apps to correctly process dead keys composition (eg ´ + a = á)
+AddPackage fcitx5               # Next generation of fcitx, cross-platform input method framework
+AddPackage fcitx5-configtool    # Configuration Tool for Fcitx5
+AddPackage fcitx5-gtk           # Fcitx5 gtk im module and glib based dbus client library
+AddPackage fcitx5-qt            # Fcitx5 Qt Library (Qt5 & Qt6 integrations)
+
+# Default fcitx5 keyboard layout configuration
+cat > "$(CreateFile /etc/xdg/fcitx5/profile)" <<EOF
+[Groups/0]
+# Group Name
+Name=Default
+# Layout
+Default Layout=es
+# Default Input Method
+DefaultIM=keyboard-es
+
+[Groups/0/Items/0]
+# Name
+Name=keyboard-es
+# Layout
+Layout=
+
+[GroupOrder]
+0=Default
+EOF
+
 # ---------------------------
 # --- Desktop Environment ---
 # ---------------------------
@@ -92,11 +121,10 @@ CreateLink /etc/systemd/system/display-manager.service /usr/lib/systemd/system/p
 # XDG User Directories service - keeps user dirs up to date
 CreateLink /etc/systemd/user/graphical-session-pre.target.wants/xdg-user-dirs.service /usr/lib/systemd/user/xdg-user-dirs.service
 
-# -----------
-# --- GTK ---
-# -----------
-# Install input method, required for GTK apps to correctly process non-ASCII characters
-AddPackage fcitx5               # Next generation of fcitx, cross-platform input method framework
-AddPackage fcitx5-configtool    # Configuration Tool for Fcitx5
-AddPackage fcitx5-gtk           # Fcitx5 gtk im module and glib based dbus client library
-AddPackage fcitx5-qt            # Fcitx5 Qt Library (Qt5 & Qt6 integrations)
+cat > "$(CreateFile /etc/xdg/kwinrc)" <<EOF
+# System-wide configuration for kwin
+
+# Use fcitx5 as input method, required for GTK apps to properly handle dead keys (eg ´)
+[Wayland]
+InputMethod=/usr/share/applications/org.fcitx.Fcitx5.desktop
+EOF

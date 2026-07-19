@@ -4,8 +4,9 @@ switch-to-activity-033b5838-4342-48a6-a32f-66f0a5c0518a=none,none,Switch to acti
 
 [KDE Keyboard Layout Switcher]
 Switch keyboard layout to Español=none,none,Cambiar la distribución de teclado a Español
-Switch to Last-Used Keyboard Layout=Meta+Alt+L,Meta+Alt+L,Cambiar a la última distribución de teclado usada
-Switch to Next Keyboard Layout=Meta+Alt+K,Meta+Alt+K,Cambiar a la siguiente distribución de teclado
+Switch keyboard layout to Spanish=none,none,Switch keyboard layout to Spanish
+Switch to Last-Used Keyboard Layout=Meta+Alt+L,Meta+Alt+L,Switch to Last-Used Keyboard Layout
+Switch to Next Keyboard Layout=Meta+Alt+K,Meta+Alt+K,Switch to Next Keyboard Layout
 _k_friendly_name=Keyboard Layout Switcher
 
 [kaccess]

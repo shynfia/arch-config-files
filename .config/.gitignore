@@ -14,6 +14,7 @@ kconf_updaterc
 ksmserverrc
 kwalletrc
 kwinoutputconfig.json
+kwinrc
 kwinrulesrc
 kxkbrc
 plasma-org.kde.plasma.desktop-appletsrc

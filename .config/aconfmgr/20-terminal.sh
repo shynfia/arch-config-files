@@ -54,7 +54,6 @@ Devel
 Provides
 DevelSuffixes = -git -cvs -svn -bzr -darcs -always -hg -fossil
 BatchInstall
-UpgradeMenu
 NewsOnUpgrade
 RemoveMake
 CleanAfter
