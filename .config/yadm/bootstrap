@@ -4,7 +4,7 @@
 aconfmgr apply
 
 # Reinstall packages that trigger pacman hooks on install
-packages_to_reinstall=(edk2-shell vintagestory)
+packages_to_reinstall=(edk2-shell fcitx5 vintagestory)
 installed_packages=($(comm -12 <(printf '%s\n' "${packages_to_reinstall[@]}" | sort) <(paru -Qq | sort)))
 
 if [[ ${#installed_packages[@]} -gt 0 ]]; then

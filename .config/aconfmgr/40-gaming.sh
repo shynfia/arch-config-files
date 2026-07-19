@@ -10,6 +10,7 @@ CreateLink /etc/fonts/conf.d/30-win32-aliases.conf /usr/share/fontconfig/conf.de
 
 # Make Vintage Story run on discrete GPU on laptop with hybrid graphics
 if [[ "$HOSTNAME" == "rocaterra" ]]; then
+	# We can overwrite system desktop entry because it is not backed up by pacman, so no risk of a .pacnew file
     cat > "$(CreateFile /etc/pacman.d/hooks/50-vintagestory.hook)" <<-EOF
 		# Set up Vintage Story to use NVIDIA GPU
 		[Trigger]

@@ -108,6 +108,26 @@ Layout=
 0=Default
 EOF
 
+# Fix fcitx5 autostart for Plasma sessions
+# File is not backed up by pacman so we can modify it on every update, no risk of a .pacnew file
+cat > "$(CreateFile /etc/pacman.d/hooks/50-fcitx5.hook)" <<-EOF
+    # Prevent fcitx5 from autostarting in Plasma sessions, since in KDE Plasma it has to be launched by kwin
+    [Trigger]
+    Operation=Install
+    Operation=Upgrade
+    Type=Package
+    Target=fcitx5
+
+    [Action]
+    Description=Blocking fcitx5 autostart in Plasma sessions...
+    When=PostTransaction
+    # kbuildsycoca6 refreshes the .desktop cache. 
+    # XDG_MENU_PREFIX is needed b/c by default it looks for applications.menu, which does not exist, and
+    # this env variable is empty when the hook runs
+    # We silence kbuildsycoca6 redirecting its output to /dev/null
+    Exec=/usr/bin/bash -c 'echo "NotShowIn=KDE" >> /etc/xdg/autostart/org.fcitx.Fcitx5.desktop && XDG_MENU_PREFIX="plasma-" kbuildsycoca6 &> /dev/null'
+EOF
+
 # ---------------------------
 # --- Desktop Environment ---
 # ---------------------------
