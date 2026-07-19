@@ -9,6 +9,7 @@ AddPackage linux-firmware 	# Firmware files for Linux - Default set
 AddPackage linux-headers        # Headers and scripts for building modules for the Linux kernel - required for building the NVIDIA drivers
 AddPackage lvm2 		# Logical Volume Manager 2 utilities
 AddPackage networkmanager 	# Network connection manager and user applications
+AddPackage pacman-contrib       # Contributed scripts and tools for pacman systems
 AddPackage sudo                 # Give certain users the ability to run some commands as root
 AddPackage wireless-regdb 	# Central Regulatory Domain Database - Sometimes required for European wifi
 
@@ -37,6 +38,22 @@ CopyFile /etc/pacman.conf
 cat > "$(CreateFile /etc/makepkg.conf.d/no_debug.conf)" <<EOF
 # Prevent creation of debug packages
 OPTIONS+=(!debug)
+EOF
+
+# Clean pacman cache after every transaction
+cat > "$(CreateFile /etc/pacman.d/hooks/10-pacman-cache.hook)" <<EOF
+[Trigger]
+Operation = Remove
+Operation = Install
+Operation = Upgrade
+Type = Package
+Target = *
+
+[Action]
+Description = Cleaning pacman cache...                        
+When = PostTransaction
+# Keep installed version + previous version
+Exec = /usr/bin/paccache -rk2
 EOF
 
 # -------------
