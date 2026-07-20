@@ -13,3 +13,6 @@ alias pacorphans='pacman -Qdtq | sudo pacman -Rns -'
 
 # --- Command prompt ---
 PS1='[\u@\h \W]\$ '
+
+# --- Suggest a package when using a command not found in the system ---
+source /usr/share/doc/pkgfile/command-not-found.bash
