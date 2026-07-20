@@ -10,6 +10,7 @@ AddPackage linux-headers        # Headers and scripts for building modules for t
 AddPackage lvm2 		# Logical Volume Manager 2 utilities
 AddPackage networkmanager 	# Network connection manager and user applications
 AddPackage pacman-contrib       # Contributed scripts and tools for pacman systems
+AddPackage reflector            # A Python 3 module and script to retrieve and filter the latest Pacman mirror list.
 AddPackage sudo                 # Give certain users the ability to run some commands as root
 AddPackage wireless-regdb 	# Central Regulatory Domain Database - Sometimes required for European wifi
 
@@ -55,6 +56,25 @@ When = PostTransaction
 # Keep installed version + previous version
 Exec = /usr/bin/paccache -rk2
 EOF
+
+# Log orphaned packages
+cat > "$(CreateFile /etc/pacman.d/hooks/10-log-orphans.hook)" <<EOF
+[Trigger]
+Operation = Remove
+Operation = Install
+Operation = Upgrade
+Type = Package
+Target = *
+
+[Action]
+Description = Checking for orphan packages...
+When = PostTransaction
+Exec = /usr/bin/bash -c "/usr/bin/pacman -Qdt || /usr/bin/echo '=> None found.'"
+EOF
+
+# Set up reflector for auto-sorting of mirrors by download rate
+CreateLink /etc/systemd/system/timers.target.wants/reflector.timer /usr/lib/systemd/system/reflector.timer
+CopyFile /etc/xdg/reflector/reflector.conf
 
 # -------------
 # --- fstab ---
