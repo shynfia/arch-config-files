@@ -1,5 +1,8 @@
 {
     "window.dialogStyle": "custom",
     "explorer.confirmDelete": false,
-    "editor.unicodeHighlight.nonBasicASCII": false
+    "editor.unicodeHighlight.nonBasicASCII": false,
+    "markdown-preview-enhanced.automaticallyShowPreviewOfMarkdownBeingEdited": true,
+    "markdown-preview-enhanced.breakOnSingleNewLine": false,
+    "markdown-preview-enhanced.enableEmojiSyntax": false
 }
