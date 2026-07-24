@@ -74,7 +74,7 @@ Exec = /usr/bin/bash -c "/usr/bin/pacman -Qdt || /usr/bin/echo '=> None found.'"
 EOF
 
 # Log new .pacnew files
-cat > "$(CreateFile /etc/pacman.d/hooks/90-log-pacnew-files.hook)" <<EOF
+cat > "$(CreateFile /etc/pacman.d/hooks/99-log-pacnew-files.hook)" <<EOF
 [Trigger]
 Operation = Remove
 Operation = Install
@@ -157,9 +157,6 @@ CreateLink /etc/localtime /usr/share/zoneinfo/Europe/Madrid
 # ----------------
 # --- Keyboard ---
 # ----------------
-# tty keyboard layout
-echo "KEYMAP=es" > "$(CreateFile /etc/vconsole.conf)"
-
 # X11 keyboard layout configuration - required for plasmalogin and inherited by plasma
 cat > "$(CreateFile /etc/X11/xorg.conf.d/00-keyboard.conf)" <<EOF
 # Written by systemd-localed(8), read by systemd-localed and Xorg. It's

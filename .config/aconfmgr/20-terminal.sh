@@ -8,11 +8,22 @@ AddPackage man-db 			        # A utility for reading man pages
 AddPackage man-pages 		        # Linux man pages
 AddPackage nano 			        # Pico editor clone with enhancements
 AddPackage nano-syntax-highlighting # Nano editor syntax highlighting enhancements
+AddPackage terminus-font            # Monospace bitmap font (for X11 and console)
 AddPackage texinfo 			        # GNU documentation system for on-line information and printed output
 AddPackage yadm                     # Yet Another Dotfiles Manager
 
 AddPackage --foreign aconfmgr-git	# A configuration manager for Arch Linux
 AddPackage --foreign paru	        # Feature packed AUR helper
+
+# -----------
+# --- TTY ---
+# -----------
+CreateLink /etc/fonts/conf.d/75-yes-terminus.conf /usr/share/fontconfig/conf.default/75-yes-terminus.conf
+
+cat > "$(CreateFile /etc/vconsole.conf)" <<EOF
+KEYMAP=es
+FONT=ter-v24b
+EOF
 
 # ------------
 # --- bash ---
@@ -57,4 +68,7 @@ BatchInstall
 NewsOnUpgrade
 RemoveMake
 CleanAfter
+
+[bin]
+Pager = bat
 EOF

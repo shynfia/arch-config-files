@@ -4,6 +4,7 @@ AddPackage discord 	            # All-in-one voice and text chat for gamers
 AddPackage dolphin 	            # KDE File Manager
 AddPackage firefox 	            # Fast, Private & Safe Web Browser
 AddPackage kitty 	            # A modern, hackable, featureful, OpenGL-based terminal emulator
+AddPackage obsidian             # A powerful knowledge base that works on top of a local folder of plain text Markdown files
 AddPackage telegram-desktop     # Official Telegram Desktop client
 
 AddPackage --foreign planify    # Task manager with Todoist and Nextcloud support
