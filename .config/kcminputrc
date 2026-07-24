@@ -1,0 +1,6 @@
+[Libinput][1112][58][Genius USB Optical Mouse]
+PointerAccelerationProfile=1
+
+[Libinput][1267][12357][ELAN1200:00 04F3:3045 Touchpad]
+NaturalScroll=true
+PointerAccelerationProfile=1
